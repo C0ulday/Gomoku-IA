@@ -16,7 +16,7 @@ public class Gomoku {
     private List<Character> board; // Plateau représenté comme une liste
     private char currentPlayer;
     private Random random;
-    private String FICHIER_PLATEAUX ="plateau.txt"; // Fichier contenant les IDs et configurations des plateaux
+    private String FICHIER_PLATEAUX = ""; // Fichier contenant les IDs et configurations des plateaux
 
     // Constructeur pour initialiser le jeu
     public Gomoku() {
@@ -53,7 +53,6 @@ public class Gomoku {
         } else {
             System.out.println("ID existant !");
         }
-       
     }
 
     // Permet au joueur actuel de faire un mouvement
@@ -144,7 +143,7 @@ public class Gomoku {
                     scanner.next(); // Consomme l'entrée incorrecte
                 }
             } else {
-                DefendreAttaque(); // Le joueur 2 (ordinateur) joue
+                DefendreAttaque(3); // Le joueur 2 (ordinateur) joue
                 System.out.println("Évaluation du plateau : " + getEvaluation());
             }
         }
@@ -292,7 +291,7 @@ public class Gomoku {
     }
     
     // Stratégie de défense améliorée de l'ordinateur pour bloquer les menaces de l'adversaire
-public void DefendreAttaque() {
+public void DefendreAttaque(int profondeur) {
     // Cherche les coups de défense critique (victoire imminente de l'adversaire)
     System.out.println("Avant trouver coup");
     int defenseMove = trouverCoupDefenseCritique();
@@ -314,9 +313,9 @@ public void DefendreAttaque() {
             makeMove(row, col); // Bloque la menace avant qu'elle ne devienne critique
             System.out.println("L'IA a défendu contre une menace !");
         } else {
-            
             // Si aucune menace détectée, jouer un coup aléatoire
-            makeAlphaBetaMove(2);
+            FICHIER_PLATEAUX = "plateau"+profondeur+".txt";
+            makeAlphaBetaMove(profondeur);
         }
     }
 }
@@ -407,8 +406,20 @@ private int compterAlignement(int row, int col, int dRow, int dCol) {
 
     // Vérifie si l'ID existe déjà dans le fichier
     public boolean isDansFichier(int id) {
+        File file = new File(FICHIER_PLATEAUX);
+        
+        // Crée le fichier s'il n'existe pas
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+                System.out.println("Le fichier " + FICHIER_PLATEAUX + " a été créé.");
+            } catch (IOException e) {
+                System.out.println("Erreur lors de la création du fichier " + FICHIER_PLATEAUX);
+                return false;
+            }
+        }
+    
         try {
-            File file = new File(FICHIER_PLATEAUX);
             Scanner scanner = new Scanner(file);
             while (scanner.hasNextInt()) {
                 int idLu = scanner.nextInt();
@@ -422,8 +433,10 @@ private int compterAlignement(int row, int col, int dRow, int dCol) {
         } catch (FileNotFoundException e) {
             System.out.println("Le fichier " + FICHIER_PLATEAUX + " est introuvable.");
         }
+        
         return false;
     }
+    
 
     // Ajoute un plateau et son évaluation dans le fichier
     public void ajouterPlateauDansFichier(int id, int evaluation, List<Character> board) {
