@@ -16,10 +16,14 @@ public class Gomoku {
     private List<Character> board; // Plateau représenté comme une liste
     private char currentPlayer;
     private Random random;
-    private String FICHIER_PLATEAUX = ""; // Fichier contenant les IDs et configurations des plateaux
-
+    private int p1,p2;
+    private int first_row, first_col; // permettent de retenir les premiers coups du premier joueur
+    private String DOC_PLATEAUX = "eval_txt/"; // Fichier contenant les IDs et configurations des plateaux
+    private String FICHIER_PLATEAUX = "";
     // Constructeur pour initialiser le jeu
-    public Gomoku() {
+    public Gomoku(int p1,int p2) {
+        this.p1 = p1;
+        this.p2 = p2;
         board = new ArrayList<>();
         for (int i = 0; i < SIZE * SIZE; i++) {
             board.add(EMPTY);
@@ -122,7 +126,13 @@ public class Gomoku {
 
     // Démarre le jeu avec interaction utilisateur
     public void playGame() {
+        printBoard();
         Scanner scanner = new Scanner(System.in);
+        System.out.print("Entrez la ligne: ");
+        first_row = scanner.nextInt();
+        System.out.print("Entrez la colonne: ");
+        first_col = scanner.nextInt();
+        makeMove(first_col, first_row);
         while (true) {
             printBoard();
             System.out.println("C'est le tour du joueur " + currentPlayer);
@@ -189,7 +199,7 @@ public class Gomoku {
     private int evaluateDirection(int row, int col, int dRow, int dCol) {
         int count = countStones(row, col, dRow, dCol);
         int openings = getPotentialOpenings(row, col, dRow, dCol);
-        return (count * 2) + openings;
+        return (count * p1) + (p2 * openings);
     }
 
     // Compte les ouvertures potentielles dans une direction donnée
@@ -292,9 +302,12 @@ public class Gomoku {
     
     // Stratégie de défense améliorée de l'ordinateur pour bloquer les menaces de l'adversaire
 public void DefendreAttaque(int profondeur) {
+
     // Cherche les coups de défense critique (victoire imminente de l'adversaire)
     System.out.println("Avant trouver coup");
     int defenseMove = trouverCoupDefenseCritique();
+
+    FICHIER_PLATEAUX =  DOC_PLATEAUX + "plateau" + "_"+first_row+ "_"+ first_col + "_"+profondeur+ ".txt";
     
     if (defenseMove != -1) {
         int row = defenseMove / SIZE;
@@ -314,7 +327,6 @@ public void DefendreAttaque(int profondeur) {
             System.out.println("L'IA a défendu contre une menace !");
         } else {
             // Si aucune menace détectée, jouer un coup aléatoire
-            FICHIER_PLATEAUX = "plateau"+profondeur+".txt";
             makeAlphaBetaMove(profondeur);
         }
     }
@@ -470,7 +482,8 @@ private int compterAlignement(int row, int col, int dRow, int dCol) {
     }
 
     public static void main(String[] args) {
-        Gomoku game = new Gomoku();
+        Gomoku game = new Gomoku(2,1);
         game.playGame();
     }
 }
+
