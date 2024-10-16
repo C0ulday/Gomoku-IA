@@ -1,5 +1,5 @@
 # Gomoku-IA
-Le but de ce projet est de réaliser une IA de Gomoku basé sur l'algorithme MINIMAX avec élagage Alpha Beta.
+Le but de ce projet est de réaliser une IA de Gomoku basée sur l'algorithme MINIMAX avec élagage Alpha Beta.
 @Authors : @C0ulday @Balla-leye
 
 - Version 1 : IA Capable de jouer selon une profondeur donnée contre le joueur Humain
