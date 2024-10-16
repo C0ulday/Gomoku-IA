@@ -16,14 +16,27 @@ public class Gomoku {
     private List<Character> board; // Plateau représenté comme une liste
     private char currentPlayer;
     private Random random;
-    private int p1,p2;
+
+    // Ajout pour versions 2 et +
+    private int profondeur;
+    /*
+        Poids des cases du Gomoku 
+        p1 < p2 < p3 < p4 < p5
+    */
+    private int p1,p2,p3,p4,p5; 
     private int first_row, first_col; // permettent de retenir les premiers coups du premier joueur
-    private String DOC_PLATEAUX = "eval_txt/"; // Fichier contenant les IDs et configurations des plateaux
+    //private String DOC_PLATEAUX = "eval_txt/"; // Fichier contenant les IDs et configurations des plateaux
     private String FICHIER_PLATEAUX = "";
+
     // Constructeur pour initialiser le jeu
-    public Gomoku(int p1,int p2) {
+    public Gomoku(int p1,int p2, int p3,int p4, int p5,int profondeur) {
         this.p1 = p1;
         this.p2 = p2;
+        this.p3 = p3;
+        this.p4 = p4;
+        this.p5 = p5;
+        this.profondeur = profondeur;
+
         board = new ArrayList<>();
         for (int i = 0; i < SIZE * SIZE; i++) {
             board.add(EMPTY);
@@ -122,10 +135,46 @@ public class Gomoku {
         return count;
     }
 
+    private int countStonesEvaluate(int row, int col, int dRow, int dCol) {
+
+        int count = 0;
+        char player = currentPlayer;
+        int r = row + dRow;
+        int c = col + dCol;
+
+        int[][] boardPonderate = {
+
+            {p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1},
+            {p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1},
+            {p1,p1,p2,p2,p2,p2,p2,p2,p2,p2,p2,p2,p1,p1},
+            {p1,p1,p2,p2,p2,p2,p2,p2,p2,p2,p2,p2,p1,p1},
+            {p1,p1,p2,p2,p3,p3,p3,p3,p3,p3,p2,p2,p1,p1},
+            {p1,p1,p2,p2,p3,p4,p4,p4,p4,p3,p2,p2,p1,p1},
+            {p1,p1,p2,p2,p3,p4,p5,p5,p4,p3,p2,p2,p1,p1},
+            {p1,p1,p2,p2,p3,p4,p5,p5,p4,p3,p2,p2,p1,p1},
+            {p1,p1,p2,p2,p3,p4,p4,p4,p4,p3,p2,p2,p1,p1},
+            {p1,p1,p2,p2,p3,p3,p3,p3,p3,p3,p2,p2,p1,p1},
+            {p1,p1,p2,p2,p2,p2,p2,p2,p2,p2,p2,p2,p1,p1},
+            {p1,p1,p2,p2,p2,p2,p2,p2,p2,p2,p2,p2,p1,p1},
+            {p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1},
+            {p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1,p1},
+
+        };
+
+        while (r >= 0 && r < SIZE && c >= 0 && c < SIZE && board.get(r * SIZE + c) == player) {
+            count = count + boardPonderate[r][c];
+            r += dRow;
+            c += dCol;
+        }
+        return count;
+    }
+
+
 
 
     // Démarre le jeu avec interaction utilisateur
     public void playGame() {
+        
         printBoard();
         Scanner scanner = new Scanner(System.in);
         System.out.print("Entrez la ligne: ");
@@ -153,7 +202,7 @@ public class Gomoku {
                     scanner.next(); // Consomme l'entrée incorrecte
                 }
             } else {
-                DefendreAttaque(3); // Le joueur 2 (ordinateur) joue
+                DefendreAttaque(); // Le joueur 2 (ordinateur) joue
                 System.out.println("Évaluation du plateau : " + getEvaluation());
             }
         }
@@ -197,7 +246,8 @@ public class Gomoku {
 
     // Évalue une direction donnée en comptant les pions et les ouvertures potentielles
     private int evaluateDirection(int row, int col, int dRow, int dCol) {
-        int count = countStones(row, col, dRow, dCol);
+        int count = countStonesEvaluate(row, col, dRow, dCol);
+        // Si le pion est dans le carré central
         int openings = getPotentialOpenings(row, col, dRow, dCol);
         return (count * p1) + (p2 * openings);
     }
@@ -215,12 +265,13 @@ public class Gomoku {
         int meilleurCoup = -1;
         int meilleureValeur = Integer.MIN_VALUE;
         List<Integer> coupsPossibles = getCoupsPossibles();
-
-        System.out.println("cherche le move");
+    
+        System.out.println("Cherche le meilleur coup...");
         for (int coup : coupsPossibles) {
-            board.set(coup, PLAYER2);
-            int valeur = AlphaBeta(profondeurMaximale - 1, false, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            board.set(coup, EMPTY);
+            board.set(coup, PLAYER2); // Place le pion pour simuler le coup
+            // Évalue la position résultante après le coup
+            int valeur = AlphaBeta(profondeurMaximale - 1, false, Integer.MIN_VALUE, Integer.MAX_VALUE); 
+            board.set(coup, EMPTY); // Annule le coup
     
             if (valeur > meilleureValeur) {
                 meilleureValeur = valeur;
@@ -231,46 +282,56 @@ public class Gomoku {
         if (meilleurCoup != -1) {
             int row = meilleurCoup / SIZE;
             int col = meilleurCoup % SIZE;
-            makeMove(row, col);
+            makeMove(row, col); // Effectue le meilleur coup trouvé
         }
-        System.out.println("Trouvé le move");
+        System.out.println("Meilleur coup trouvé.");
     }
-    // Implémentation de l'algorithme AlphaBeta
+    
+    // Implémentation de l'algorithme AlphaBeta avec élagage
     private int AlphaBeta(int profondeur, boolean maximizingPlayer, int alpha, int beta) {
+        // Condition d'arrêt : profondeur max atteinte ou fin de jeu
         if (profondeur == 0 || isGameOver()) {
-            return getEvaluation();
+            return getEvaluation(); // Retourne l'évaluation de la position courante
         }
     
-        List<Integer> coups = getCoupsPossibles();
+        List<Integer> coupsPossibles = getCoupsPossibles(); // Obtenir les coups possibles
     
         if (maximizingPlayer) {
             int maxEval = Integer.MIN_VALUE;
-            for (int coup : coups) {
-                board.set(coup, PLAYER2);
-                int eval = AlphaBeta(profondeur - 1, false, alpha, beta);
-                board.set(coup, EMPTY);
-                maxEval = Math.max(maxEval, eval);
-                alpha = Math.max(alpha, eval);
+    
+            for (int coup : coupsPossibles) {
+                board.set(coup, PLAYER2); // Simule le coup
+                int eval = AlphaBeta(profondeur - 1, false, alpha, beta); // Recherche le coup optimal pour l'adversaire
+                board.set(coup, EMPTY); // Annule le coup
+    
+                maxEval = Math.max(maxEval, eval); // Met à jour la meilleure évaluation trouvée
+                alpha = Math.max(alpha, eval); // Met à jour alpha
+    
                 if (beta <= alpha) {
-                    break;
+                    break; // Coupure beta (on coupe les branches non utiles)
                 }
             }
             return maxEval;
+    
         } else {
             int minEval = Integer.MAX_VALUE;
-            for (int coup : coups) {
-                board.set(coup, PLAYER1);
-                int eval = AlphaBeta(profondeur - 1, true, alpha, beta);
-                board.set(coup, EMPTY);
-                minEval = Math.min(minEval, eval);
-                beta = Math.min(beta, eval);
+    
+            for (int coup : coupsPossibles) {
+                board.set(coup, PLAYER1); // Simule le coup pour le joueur adverse
+                int eval = AlphaBeta(profondeur - 1, true, alpha, beta); // Recherche le coup optimal pour nous
+                board.set(coup, EMPTY); // Annule le coup
+    
+                minEval = Math.min(minEval, eval); // Met à jour la pire évaluation possible
+                beta = Math.min(beta, eval); // Met à jour beta
+    
                 if (beta <= alpha) {
-                    break;
+                    break; // Coupure alpha
                 }
             }
             return minEval;
         }
     }
+    
     /**********`isGameOver()`********
     //Ajout d'une condition d'arrêt pour éviter une récursion infinie.
     //vérifie si le jeu est terminé (victoire ou match nul).*/
@@ -287,7 +348,7 @@ public class Gomoku {
         }
         return !board.contains(EMPTY); // Match nul si le plateau est plein
     }
-    /*********`getCoupsPossibles()` **********
+    /*
     but : pour éviter de parcourir tout le plateau à chaque itération.
     retourne une liste des coups possibles (cases vides) pour optimiser la recherche.*/
     private List<Integer> getCoupsPossibles() {
@@ -301,13 +362,11 @@ public class Gomoku {
     }
     
     // Stratégie de défense améliorée de l'ordinateur pour bloquer les menaces de l'adversaire
-public void DefendreAttaque(int profondeur) {
+public void DefendreAttaque() {
 
     // Cherche les coups de défense critique (victoire imminente de l'adversaire)
     System.out.println("Avant trouver coup");
     int defenseMove = trouverCoupDefenseCritique();
-
-    FICHIER_PLATEAUX =  DOC_PLATEAUX + "plateau" + "_"+first_row+ "_"+ first_col + "_"+profondeur+ ".txt";
     
     if (defenseMove != -1) {
         int row = defenseMove / SIZE;
@@ -418,6 +477,18 @@ private int compterAlignement(int row, int col, int dRow, int dCol) {
 
     // Vérifie si l'ID existe déjà dans le fichier
     public boolean isDansFichier(int id) {
+
+        FICHIER_PLATEAUX = "eval_txt/plateau_" 
+        + first_row + "_" 
+        + first_col + "_" 
+        + profondeur + "_" 
+        + p1 + "_" 
+        + p2 + "_" 
+        + p3 + "_" 
+        + p4 + "_" 
+        + p5 
+        + ".txt";
+
         File file = new File(FICHIER_PLATEAUX);
         
         // Crée le fichier s'il n'existe pas
@@ -482,7 +553,7 @@ private int compterAlignement(int row, int col, int dRow, int dCol) {
     }
 
     public static void main(String[] args) {
-        Gomoku game = new Gomoku(2,1);
+        Gomoku game = new Gomoku(-10,20,30,40,500,1);
         game.playGame();
     }
 }
