@@ -25,8 +25,8 @@ public class Gomoku {
     */
     private int p1,p2,p3,p4,p5; 
     private int first_row, first_col; // permettent de retenir les premiers coups du premier joueur
-    //private String DOC_PLATEAUX = "eval_txt/"; // Fichier contenant les IDs et configurations des plateaux
-    private String FICHIER_PLATEAUX = "";
+    private String DOC = "eval_txt/"; // Fichier contenant les IDs et configurations des plateaux
+    private String FICHIER = "";
 
     // Constructeur pour initialiser le jeu
     public Gomoku(int p1,int p2, int p3,int p4, int p5,int profondeur) {
@@ -150,6 +150,7 @@ public class Gomoku {
             {p1,p1,p2,p2,p2,p2,p2,p2,p2,p2,p2,p2,p1,p1},
             {p1,p1,p2,p2,p3,p3,p3,p3,p3,p3,p2,p2,p1,p1},
             {p1,p1,p2,p2,p3,p4,p4,p4,p4,p3,p2,p2,p1,p1},
+            {p1,p1,p2,p2,p3,p4,p5,p5,p4,p3,p2,p2,p1,p1},
             {p1,p1,p2,p2,p3,p4,p5,p5,p4,p3,p2,p2,p1,p1},
             {p1,p1,p2,p2,p3,p4,p5,p5,p4,p3,p2,p2,p1,p1},
             {p1,p1,p2,p2,p3,p4,p4,p4,p4,p3,p2,p2,p1,p1},
@@ -478,7 +479,8 @@ private int compterAlignement(int row, int col, int dRow, int dCol) {
     // Vérifie si l'ID existe déjà dans le fichier
     public boolean isDansFichier(int id) {
 
-        FICHIER_PLATEAUX = "eval_txt/plateau_" 
+        FICHIER = DOC
+        + "plateau_"
         + first_row + "_" 
         + first_col + "_" 
         + profondeur + "_" 
@@ -489,15 +491,15 @@ private int compterAlignement(int row, int col, int dRow, int dCol) {
         + p5 
         + ".txt";
 
-        File file = new File(FICHIER_PLATEAUX);
+        File file = new File(FICHIER);
         
         // Crée le fichier s'il n'existe pas
         if (!file.exists()) {
             try {
                 file.createNewFile();
-                System.out.println("Le fichier " + FICHIER_PLATEAUX + " a été créé.");
+                System.out.println("Le fichier " + FICHIER + " a été créé.");
             } catch (IOException e) {
-                System.out.println("Erreur lors de la création du fichier " + FICHIER_PLATEAUX);
+                System.out.println("Erreur lors de la création du fichier " + FICHIER);
                 return false;
             }
         }
@@ -514,7 +516,7 @@ private int compterAlignement(int row, int col, int dRow, int dCol) {
             }
             scanner.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Le fichier " + FICHIER_PLATEAUX + " est introuvable.");
+            System.out.println("Le fichier " + FICHIER + " est introuvable.");
         }
         
         return false;
@@ -524,19 +526,19 @@ private int compterAlignement(int row, int col, int dRow, int dCol) {
     // Ajoute un plateau et son évaluation dans le fichier
     public void ajouterPlateauDansFichier(int id, int evaluation, List<Character> board) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(FICHIER_PLATEAUX, true));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(FICHIER, true));
             writer.write(id + " " + evaluation);
             writer.newLine();
             writer.close();
         } catch (IOException e) {
-            System.out.println("Erreur lors de l'écriture dans le fichier " + FICHIER_PLATEAUX);
+            System.out.println("Erreur lors de l'écriture dans le fichier " + FICHIER);
         }
     }
 
     // Récupère l'évaluation d'un plateau à partir du fichier
     public int getScore(int id) {
         try {
-            Scanner scanner = new Scanner(new File(FICHIER_PLATEAUX));
+            Scanner scanner = new Scanner(new File(FICHIER));
             while (scanner.hasNextInt()) {
                 int idLu = scanner.nextInt();
                 int scoreLu = scanner.nextInt();
@@ -547,14 +549,10 @@ private int compterAlignement(int row, int col, int dRow, int dCol) {
             }
             scanner.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Le fichier " + FICHIER_PLATEAUX + " est introuvable.");
+            System.out.println("Le fichier " + FICHIER + " est introuvable.");
         }
         return 0;
     }
 
-    public static void main(String[] args) {
-        Gomoku game = new Gomoku(-10,20,30,40,500,1);
-        game.playGame();
-    }
-}
 
+}
