@@ -1,5 +1,6 @@
 # Gomoku-IA
 Le but de ce projet est de réaliser une IA de Gomoku basée sur l'algorithme MINIMAX avec élagage Alpha Beta.
+Règle du Gomoku : Aligner 5 de ses pions dans une direction avant l'autre joueur. 
 @Authors : @C0ulday @Balla-leye
 
 - Version 1 : IA Capable de jouer selon une profondeur donnée contre le joueur Humain
