@@ -1,4 +1,5 @@
 # Gomoku-IA
+Le but de ce projet est de réaliser une IA de Gomoku basé sur l'algorithme MINIMAX avec élagage Alpha Beta.
 - Version 1 : IA Capable de jouer selon une profondeur donnée contre le joueur
 - Version 2 : IA + Deep Learning c.a.d enregistrer l'évaluation des tables dans un fichier texte pour ne pas avoir à les recalculer
 - Version 2.1 : Enregistrement des évaluations dans plusieurs fichiers selon first_row_first_col_profondeur;
