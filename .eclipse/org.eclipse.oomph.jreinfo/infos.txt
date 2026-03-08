@@ -1,0 +1,2 @@
+/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home:21:0:4:64:true:1721180471000:aarch64
+/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home:1:8:0:64:false:1727685833000:aarch64

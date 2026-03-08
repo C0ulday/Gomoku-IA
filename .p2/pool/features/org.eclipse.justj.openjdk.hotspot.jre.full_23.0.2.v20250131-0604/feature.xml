@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2020 Eclipse contributors and others.
+
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+-->
+<feature
+      id="org.eclipse.justj.openjdk.hotspot.jre.full"
+      label="%featureName"
+      version="23.0.2.v20250131-0604"
+      provider-name="%providerName">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="org.eclipse.justj.openjdk.hotspot.jre.full"
+         download-size="21"
+         install-size="70"
+         version="23.0.2.v20250131-0604"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.justj.openjdk.hotspot.jre.full.linux.aarch64"
+         os="linux"
+         arch="aarch64"
+         download-size="136838"
+         install-size="193273"
+         version="23.0.2.v20250131-0604"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.justj.openjdk.hotspot.jre.full.linux.riscv64"
+         os="linux"
+         arch="riscv64"
+         download-size="135797"
+         install-size="181888"
+         version="23.0.2.v20250131-0604"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.justj.openjdk.hotspot.jre.full.linux.ppc64le"
+         os="linux"
+         arch="ppc64le"
+         download-size="137163"
+         install-size="197158"
+         version="23.0.2.v20250131-0604"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.justj.openjdk.hotspot.jre.full.linux.x86_64"
+         os="linux"
+         arch="x86_64"
+         download-size="137501"
+         install-size="191826"
+         version="23.0.2.v20250131-0604"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.justj.openjdk.hotspot.jre.full.macosx.x86_64"
+         os="macosx"
+         arch="x86_64"
+         download-size="135699"
+         install-size="188140"
+         version="23.0.2.v20250131-0604"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.justj.openjdk.hotspot.jre.full.macosx.aarch64"
+         os="macosx"
+         arch="aarch64"
+         download-size="134454"
+         install-size="186062"
+         version="23.0.2.v20250131-0604"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.justj.openjdk.hotspot.jre.full.win32.aarch64"
+         os="win32"
+         arch="aarch64"
+         download-size="131225"
+         install-size="174854"
+         version="23.0.2.v20250131-0604"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64"
+         os="win32"
+         arch="x86_64"
+         download-size="133735"
+         install-size="178858"
+         version="23.0.2.v20250131-0604"
+         fragment="true"/>
+
+</feature>

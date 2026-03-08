@@ -1,0 +1,1 @@
+hsh -s /bin/zsh
