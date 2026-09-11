@@ -1,1 +1,1 @@
-# Chess game with IA opponent
+# Chess game with AI opponent
