@@ -1,2 +1,1 @@
-# UAV-Control
-# UAV-Control
+# Chess game with IA opponent
